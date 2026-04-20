@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Component {
+  id           String        @id @default(cuid())
+  name         String
+  serialNumber String        @unique
+  partNumber   String
+  type         ComponentType
+  status       BuildStatus   @default(PENDING)
+  notes        String?
+  buildStages  BuildStage[]
+  testEvents   TestEvent[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@map("components")
+}
+
+model BuildStage {
+  id          String    @id @default(cuid())
+  name        String
+  sequence    Int
+  completedAt DateTime?
+  notes       String?
+  componentId String
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@map("build_stages")
+}
+
+model TestEvent {
+  id          String    @id @default(cuid())
+  eventType   String
+  result      String
+  performedAt DateTime  @default(now())
+  notes       String?
+  componentId String
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+
+  @@map("test_events")
+}
+
+enum BuildStatus {
+  PENDING
+  IN_PROGRESS
+  TESTING
+  ACCEPTED
+  REJECTED
+}
+
+enum ComponentType {
+  HEAT_SHIELD
+  ENGINE_COMPONENT
+  AVIONICS
+  STRUCTURAL
+  PROPULSION
+}

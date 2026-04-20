@@ -1,0 +1,21 @@
+{
+  "name": "nova-build-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Manufacturing component build tracker — React + TypeScript + Apollo GraphQL + PostgreSQL",
+  "workspaces": [
+    "services/*"
+  ],
+  "scripts": {
+    "start": "docker compose up",
+    "start:clean": "docker compose up --build",
+    "stop": "docker compose down",
+    "clean": "docker compose down -v",
+    "logs": "docker compose logs -f",
+    "logs:api": "docker compose logs -f api",
+    "logs:web": "docker compose logs -f web"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

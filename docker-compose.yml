@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: nova_build_tracker
+      POSTGRES_USER: nova
+      POSTGRES_PASSWORD: nova_secret
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nova -d nova_build_tracker"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./services/api
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://nova:nova_secret@db:5432/nova_build_tracker
+      NODE_ENV: development
+      PORT: 4000
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./services/api/src:/app/src
+
+  web:
+    build:
+      context: ./services/web
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./services/web/src:/app/src
+      - ./services/web/vite.config.ts:/app/vite.config.ts
+
+volumes:
+  db-data:
