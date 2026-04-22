@@ -20,10 +20,3 @@
 
 version:
 
-## Testing
-
-<!-- Include testing section only for code changes that require testing -->
-<!-- For documentation changes (docs:), style changes (style:), or chore changes, omit this section -->
-- [ ] I have tested these changes locally with `npm start`
-- [ ] All existing tests pass
-- [ ] My commits are signed with GPG
