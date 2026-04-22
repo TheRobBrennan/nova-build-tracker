@@ -85,21 +85,34 @@ const splitLink = split(
 const cache = new InMemoryCache();
 
 // Persist cache to localStorage for smooth reloads
-persistCache({
+const initCache = persistCache({
   cache,
   storage: localStorage,
   key: 'nova-build-tracker-cache',
 });
 
-export const apolloClient = new ApolloClient({
-  link: splitLink,
-  cache,
-  ssrMode: false,
+// Export a Promise that resolves to the initialized client
+export const apolloClientPromise = initCache.then(() => {
+  return new ApolloClient({
+    link: splitLink,
+    cache,
+    ssrMode: false,
+  });
+});
+
+// For backward compatibility, export the client (will be ready after cache loads)
+export let apolloClient: ApolloClient<NormalizedCacheObject>;
+
+// Initialize the client
+apolloClientPromise.then((client: ApolloClient<NormalizedCacheObject>) => {
+  apolloClient = client;
 });
 
 wsClient.on('connected', () => {
   // Smooth refetch - no flash, just updates in background
-  apolloClient.reFetchObservableQueries().catch(() => {
-    // Silently handle errors - we'll retry via RetryLink
-  });
+  if (apolloClient) {
+    apolloClient.reFetchObservableQueries().catch(() => {
+      // Silently handle errors - we'll retry via RetryLink
+    });
+  }
 });
