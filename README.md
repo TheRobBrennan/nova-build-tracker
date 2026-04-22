@@ -202,3 +202,4 @@ See [Act Setup Guide](docs/ACT_SETUP.md) for detailed setup instructions.
 - **Idempotent seed**: The seed script checks for existing data before inserting — safe to run on every container start
 - **Prisma Migrate**: Migrations run automatically via `prisma migrate deploy` in the Docker entrypoint before the server starts
 - **Automated versioning**: Semantic version bumps triggered by conventional commit messages on merge to main
+- **Note**: This line tests version bump automation
