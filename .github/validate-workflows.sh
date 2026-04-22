@@ -59,8 +59,7 @@ validate_version_bump() {
     local required_steps=(
       "Determine Version Bump Type"
       "Detect Changed Services"
-      "Create Version Bump Branch"
-      "Create or Update Pull Request"
+      "Update Versions and Commit"
     )
     
     for step in "${required_steps[@]}"; do
@@ -117,7 +116,7 @@ if [ -d ".github/test-data/pr-events" ]; then
   echo "  Test data directory exists"
   
   # Check for required test event files
-  local required_files=(
+  required_files=(
     "valid.json"
     "invalid.json"
     "major.json"
@@ -126,6 +125,7 @@ if [ -d ".github/test-data/pr-events" ]; then
     "api-changes.json"
     "web-changes.json"
     "multiple-changes.json"
+    "infra-only-changes.json"
   )
   
   for file in "${required_files[@]}"; do
