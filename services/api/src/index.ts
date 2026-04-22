@@ -22,6 +22,11 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 const app = express();
 const httpServer = http.createServer(app);
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
+
 const wsServer = new WebSocketServer({
   server: httpServer,
   path: '/graphql',
