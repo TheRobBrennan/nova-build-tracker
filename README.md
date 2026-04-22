@@ -205,3 +205,4 @@ See [Act Setup Guide](docs/ACT_SETUP.md) for detailed setup instructions.
 - **Note**: This line tests version bump automation
 - **Fixed**: Workflow now uses --admin flag for automatic merging
 - **Final test**: Verifying complete automation works correctly
+- **Fixed workflow**: Now uses direct commits instead of PRs
