@@ -60,6 +60,21 @@ All services share the same Docker network; the API is exposed on `localhost:400
 
 ## Quick Tips for New Contributors
 
+## Branch, Write, Review, Ship
+
+| Step | Action | Command |
+|---|---|---|
+| 1 | Create a date‑prefixed branch | `git checkout -b $(date +%Y.%m.%d)/branch-name && git push --set-upstream origin $(date +%Y.%m.%d)/branch-name` |
+| 2 | Edit or add files | Edit files locally. |
+| 3 | Pause for review | Verify changes, fix linter warnings. |
+| 4 | Commit | Stage relevant files, use a semantic commit and sign: `git commit -S -m "feat: <desc>"` |
+| 5 | Push and create PR | `gh pr create --title "feat: <description>" --body "..."` |
+| 6 | Review diff | `gh pr diff <PR_NUMBER>` |
+| 7 | Auto‑approve & watch CI | `gh pr review <PR_NUMBER> --approve && gh pr checks <PR_NUMBER> --watch` |
+| 8 | Merge & delete branch | `gh pr merge <PR_NUMBER> --merge --delete-branch` |
+| 9 | Sync main | `git checkout main && git pull` |
+
+
 ## Merge & Release
 
 | Action | Command | Description |
