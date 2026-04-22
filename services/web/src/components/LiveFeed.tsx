@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSubscription } from '@apollo/client';
 import { Zap } from 'lucide-react';
+import { getWsConnected, subscribeToWsState } from '../apollo/client';
 import { COMPONENT_STATUS_CHANGED } from '../graphql/subscriptions';
 import { StatusBadge } from './StatusBadge';
 import type { BuildStatus } from '../types';
@@ -14,10 +15,19 @@ interface FeedEvent {
 }
 
 export function LiveFeed() {
-  const eventsRef = useRef<FeedEvent[]>([]);
+  const [events, setEvents] = useState<FeedEvent[]>([]);
+  const [wsConnected, setWsConnected] = useState(() => getWsConnected());
+
+  useEffect(() => {
+    setWsConnected(getWsConnected());
+    return subscribeToWsState(
+      () => setWsConnected(true),
+      () => setWsConnected(false)
+    );
+  }, []);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { data, error } = useSubscription<{
+  const { data } = useSubscription<{
     componentStatusChanged: { id: string; name: string; status: BuildStatus; updatedAt: string };
   }>(COMPONENT_STATUS_CHANGED);
 
@@ -27,13 +37,11 @@ export function LiveFeed() {
       ...data.componentStatusChanged,
       receivedAt: new Date(),
     };
-    eventsRef.current = [event, ...eventsRef.current].slice(0, 20);
+    setEvents((prev: FeedEvent[]) => [event, ...prev].slice(0, 20));
     if (containerRef.current) {
       containerRef.current.scrollTop = 0;
     }
   }, [data]);
-
-  const events = eventsRef.current;
 
   return (
     <aside className="w-72 shrink-0 flex flex-col gap-3">
@@ -42,15 +50,13 @@ export function LiveFeed() {
         <h2 className="text-sm font-semibold text-slate-300">Live Updates</h2>
         <span
           className={`ml-auto h-2 w-2 rounded-full ${
-            error ? 'bg-red-500' : 'bg-emerald-500 animate-pulse'
+            wsConnected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'
           }`}
         />
       </div>
 
-      {error && (
-        <p className="text-xs text-red-400 break-all">
-          WS error: {error.message || error.networkError?.message || JSON.stringify(error)}
-        </p>
+      {!wsConnected && (
+        <p className="text-xs text-slate-500 italic">Reconnecting…</p>
       )}
 
       <div
