@@ -6,4 +6,5 @@ dist/
 coverage/
 .nyc_output/
 services/api/prisma/migrations/
-services/web/dist/
+.claude/
+
