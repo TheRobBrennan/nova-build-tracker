@@ -36,9 +36,9 @@
     "test:workflows": "chmod +x .github/test-workflows.sh && .github/test-workflows.sh",
     "test:workflows:validate": "chmod +x .github/validate-workflows.sh && .github/validate-workflows.sh",
     "storybook": "npm run storybook -w services/web",
-    "build-storybook": "npm run build-storybook -w services/web",
+    "storybook:build": "npm run build-storybook -w services/web",
     "storybook:docker": "docker compose --profile storybook up storybook",
-    "logs:storybook": "docker compose logs -f storybook"
+    "storybook:logs": "docker compose logs -f storybook"
   },
   "overrides": {
     "@types/express": "^4.17.0"

@@ -52,10 +52,10 @@ npm run clean          # Stop and remove volumes (wipes DB)
 npm run logs           # Tail all service logs
 npm run logs:api       # Tail API logs only
 npm run logs:web       # Tail web logs only
-npm run logs:storybook # Tail Storybook logs only
 npm run storybook          # Run Storybook locally (port 6006, requires local Node.js)
+npm run storybook:build    # Build static Storybook
 npm run storybook:docker   # Run only Storybook in Docker (port 6006)
-npm run build-storybook    # Build static Storybook
+npm run storybook:logs     # Tail Storybook container logs
 ```
 
 ## Testing
@@ -113,6 +113,12 @@ Access points when using `start:dev`:
 
 ```bash
 npm run storybook:docker
+```
+
+**Build static output:**
+
+```bash
+npm run storybook:build
 ```
 
 **Local (Node.js must be installed in `services/web`):**
