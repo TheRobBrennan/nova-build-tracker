@@ -11,9 +11,6 @@ const config: StorybookConfig = {
     '@storybook/addon-a11y',
   ],
   framework: '@storybook/react-vite',
-  docs: {
-    autodocs: 'tag',
-  },
   viteFinal: async (config) => {
     const mockPath = resolve(__dirname, './__mocks__/apolloClient.ts');
     config.plugins = [
