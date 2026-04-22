@@ -60,6 +60,17 @@ All services share the same Docker network; the API is exposed on `localhost:400
 
 ## Quick Tips for New Contributors
 
+## Merge & Release
+
+| Action | Command | Description |
+|---|---|---|
+| Create a PR | `gh pr create --title "feat: <description>" --body "..."` | Open a GitHub pull request |
+| Review & Approve | `gh pr review <PR_NUMBER> --approve` | Approve the PR |
+| Watch CI | `gh pr checks <PR_NUMBER> --watch` | Watch CI status |
+| Merge PR | `gh pr merge <PR_NUMBER> --merge --delete-branch` | Merge the PR and delete branch |
+| Sync main | `git checkout main && git pull` | Pull latest main |
+
+
 - **Local dev**: `npm run start:dev` to get everything up. No local Node needed if you use Docker.
 - **Testing**: Run `npm test` for fast CI‑style checks. Use `-t` to target a single test.
 - **Schema**: GraphQL types live in `services/api/src/schema.ts`; use `services/api/src/resolvers/` for query/mutation logic.
