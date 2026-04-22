@@ -1,6 +1,6 @@
 {
   "name": "nova-build-tracker",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Manufacturing component build tracker — React + TypeScript + Apollo GraphQL + PostgreSQL",
   "homepage": "https://github.com/TheRobBrennan/nova-build-tracker#readme",
