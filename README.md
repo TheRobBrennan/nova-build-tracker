@@ -203,3 +203,4 @@ See [Act Setup Guide](docs/ACT_SETUP.md) for detailed setup instructions.
 - **Prisma Migrate**: Migrations run automatically via `prisma migrate deploy` in the Docker entrypoint before the server starts
 - **Automated versioning**: Semantic version bumps triggered by conventional commit messages on merge to main
 - **Note**: This line tests version bump automation
+- **Fixed**: Workflow now uses --admin flag for automatic merging
