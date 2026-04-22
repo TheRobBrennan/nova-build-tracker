@@ -19,4 +19,3 @@
 <!-- version: revert   # Reverting changes -->
 
 version:
-
