@@ -14,7 +14,7 @@ const retryLink = new RetryLink({
   attempts: { max: 5, retryIf: (error) => !!error },
 });
 
-const wsClient = createClient({
+export const wsClient = createClient({
   url: WS_URL,
   on: {
     connecting: () => console.log('[graphql-ws] connecting to', WS_URL),
