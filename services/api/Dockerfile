@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl curl
 
 WORKDIR /app
 
@@ -9,7 +9,6 @@ RUN npm install
 
 COPY prisma ./prisma/
 COPY prisma.config.ts ./
-RUN npx prisma generate
 
 COPY . .
 
