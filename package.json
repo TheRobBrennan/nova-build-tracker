@@ -22,7 +22,11 @@
     "clean": "docker compose down -v",
     "logs": "docker compose logs -f",
     "logs:api": "docker compose logs -f api",
-    "logs:web": "docker compose logs -f web"
+    "logs:web": "docker compose logs -f web",
+    "test": "npm run test -w services/api",
+    "test:api": "npm run test -w services/api",
+    "test:api:watch": "npm run test:watch -w services/api",
+    "test:api:coverage": "npm run test:coverage -w services/api"
   },
   "overrides": {
     "@types/express": "^4.17.0"
