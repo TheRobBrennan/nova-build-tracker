@@ -30,20 +30,13 @@ services:
       - "4000:4000"
     volumes:
       - ./services/api/src:/app/src
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
 
   web:
     build:
       context: ./services/web
       dockerfile: Dockerfile
     depends_on:
-      api:
-        condition: service_healthy
+      - api
     ports:
       - "5173:5173"
     volumes:
