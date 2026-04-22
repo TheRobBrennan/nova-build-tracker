@@ -12,8 +12,6 @@ COPY prisma.config.ts ./
 
 COPY . .
 
-RUN npm run build
-
 EXPOSE 4000
 
 COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh

@@ -11,4 +11,4 @@ echo "Seeding database..."
 npx tsx src/seed.ts
 
 echo "Starting API server..."
-exec node dist/index.js
+exec npx tsx watch src/index.ts
