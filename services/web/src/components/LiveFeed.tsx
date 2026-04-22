@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSubscription } from '@apollo/client';
 import { Zap } from 'lucide-react';
-import { wsClient } from '../apollo/client';
+import { getWsConnected, subscribeToWsState } from '../apollo/client';
 import { COMPONENT_STATUS_CHANGED } from '../graphql/subscriptions';
 import { StatusBadge } from './StatusBadge';
 import type { BuildStatus } from '../types';
@@ -16,17 +16,16 @@ interface FeedEvent {
 
 export function LiveFeed() {
   const [events, setEvents] = useState<FeedEvent[]>([]);
-  const [wsConnected, setWsConnected] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [wsConnected, setWsConnected] = useState(() => getWsConnected());
 
   useEffect(() => {
-    const offConnected = wsClient.on('connected', () => setWsConnected(true));
-    const offClosed = wsClient.on('closed', () => setWsConnected(false));
-    return () => {
-      offConnected();
-      offClosed();
-    };
+    setWsConnected(getWsConnected());
+    return subscribeToWsState(
+      () => setWsConnected(true),
+      () => setWsConnected(false)
+    );
   }, []);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const { data } = useSubscription<{
     componentStatusChanged: { id: string; name: string; status: BuildStatus; updatedAt: string };
