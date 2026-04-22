@@ -51,6 +51,38 @@ npm run logs:api    # Tail API logs only
 npm run logs:web    # Tail web logs only
 ```
 
+## Testing
+
+### Test Suite Overview
+
+```bash
+npm test            # Run service tests + workflow validation (fast)
+npm run test:services      # Service tests only (API + web)
+npm run test:workflows:validate  # Quick workflow validation (seconds)
+npm run test:workflows     # Full workflow testing with Docker (15+ minutes)
+```
+
+### Test Coverage
+
+**Service Tests (`test:services`):**
+- API unit tests and type checking
+- Web component tests and type checking
+- Fast feedback for code changes
+
+**Workflow Validation (`test:workflows:validate`):**
+- GitHub Actions workflow syntax and structure
+- Required steps and permissions validation
+- Test data completeness check
+- Documentation presence verification
+- Runs in ~1 second
+
+**Full Workflow Testing (`test:workflows`):**
+- Complete GitHub Actions execution using `act`
+- Docker container builds and workflow simulation
+- Integration testing for version bump automation
+- Requires Docker and can take 15+ minutes
+- Authentication errors expected locally (works in GitHub)
+
 ## Project Structure
 
 ```text
