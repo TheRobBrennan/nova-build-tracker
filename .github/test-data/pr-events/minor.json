@@ -1,0 +1,16 @@
+{
+  "name": "push",
+  "payload": {
+    "ref": "refs/heads/main",
+    "head_commit": {
+      "message": "feat: add new component tracking feature",
+      "id": "commit456",
+      "added": [],
+      "removed": [],
+      "modified": ["package.json", "services/web/src/components/ComponentList.tsx"]
+    },
+    "repository": {
+      "default_branch": "main"
+    }
+  }
+}

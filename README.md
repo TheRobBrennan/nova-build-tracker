@@ -14,6 +14,8 @@ Tracks rocket components through their full build lifecycle: fabrication, inspec
 | Real-time | GraphQL Subscriptions over WebSocket (`graphql-ws`) |
 | Infrastructure | Docker, Docker Compose |
 
+> **Note**: Apollo Server v4 is end-of-life as of January 26, 2026. An upgrade to Apollo Server v5 is planned for future releases.
+
 ## Documentation
 
 | Document | Description |
@@ -48,6 +50,41 @@ npm run logs        # Tail all service logs
 npm run logs:api    # Tail API logs only
 npm run logs:web    # Tail web logs only
 ```
+
+## Testing
+
+### Test Suite Overview
+
+```bash
+npm test            # Run service tests + workflow validation (fast)
+npm run test:services      # Service tests only (API + web)
+npm run test:workflows:validate  # Quick workflow validation (seconds)
+npm run test:workflows     # Full workflow testing with Docker (15+ minutes)
+```
+
+### Test Coverage
+
+**Service Tests (`test:services`):**
+
+- API unit tests and type checking
+- Web component tests and type checking
+- Fast feedback for code changes
+
+**Workflow Validation (`test:workflows:validate`):**
+
+- GitHub Actions workflow syntax and structure
+- Required steps and permissions validation
+- Test data completeness check
+- Documentation presence verification
+- Runs in ~1 second
+
+**Full Workflow Testing (`test:workflows`):**
+
+- Complete GitHub Actions execution using `act`
+- Docker container builds and workflow simulation
+- Integration testing for version bump automation
+- Requires Docker and can take 15+ minutes
+- Authentication errors expected locally (works in GitHub)
 
 ## Project Structure
 
@@ -115,6 +152,48 @@ logTestEvent(componentId: ID!, input: LogTestEventInput!): TestEvent!
 componentStatusChanged: Component!   # real-time via WebSocket
 ```
 
+## Version Management
+
+### Automated Version Bumping
+
+This project uses automated version management that triggers on merges to `main`:
+
+- **Major bump**: `feat!`, `fix!`, `refactor!` (breaking changes)
+- **Minor bump**: `feat:` (new features)
+- **Patch bump**: `fix:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:`, `build:`, `ci:`, `chore:`, `revert:`
+
+The version bump workflow:
+
+1. Detects bump type from commit message
+2. Identifies which services changed (API, web, or both)
+3. Updates version numbers in affected `package.json` files
+4. Creates an automated PR with version changes
+5. Waits for CI checks and merges automatically
+
+### Testing Workflows Locally
+
+**Quick Validation (Recommended):**
+
+```bash
+# Fast syntax and logic validation (seconds)
+npm run test:workflows:validate
+```
+
+**Full Integration Testing:**
+
+```bash
+# Install act (macOS)
+brew install act
+
+# Complete workflow testing with Docker (minutes)
+npm run test:workflows
+
+# Test specific workflow
+act pull_request -e .github/test-data/pr-events/valid.json -W .github/workflows/ci.yml
+```
+
+See [Act Setup Guide](docs/ACT_SETUP.md) for detailed setup instructions.
+
 ## Architecture Notes
 
 - **Docker-first**: The entire stack starts with `npm start` — no local Node.js or Postgres required
@@ -122,3 +201,4 @@ componentStatusChanged: Component!   # real-time via WebSocket
 - **Split link**: Apollo Client routes subscriptions to WebSocket and everything else to HTTP automatically
 - **Idempotent seed**: The seed script checks for existing data before inserting — safe to run on every container start
 - **Prisma Migrate**: Migrations run automatically via `prisma migrate deploy` in the Docker entrypoint before the server starts
+- **Automated versioning**: Semantic version bumps triggered by conventional commit messages on merge to main

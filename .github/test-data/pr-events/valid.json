@@ -1,0 +1,17 @@
+{
+  "name": "pull_request",
+  "payload": {
+    "action": "opened",
+    "number": 123,
+    "pull_request": {
+      "title": "feat: add new component feature",
+      "body": "Adding a new feature to track components",
+      "head": {
+        "ref": "feature-branch"
+      },
+      "base": {
+        "ref": "main"
+      }
+    }
+  }
+}

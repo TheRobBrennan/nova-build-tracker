@@ -1,6 +1,6 @@
 {
   "name": "nova-build-tracker",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
   "description": "Manufacturing component build tracker — React + TypeScript + Apollo GraphQL + PostgreSQL",
   "homepage": "https://github.com/TheRobBrennan/nova-build-tracker#readme",
@@ -23,13 +23,16 @@
     "logs": "docker compose logs -f",
     "logs:api": "docker compose logs -f api",
     "logs:web": "docker compose logs -f web",
-    "test": "npm run test -w services/api && npm run test -w services/web",
+    "test": "npm run test:services && npm run test:workflows:validate",
+    "test:services": "npm run test -w services/api && npm run test -w services/web",
     "test:api": "npm run test -w services/api",
     "test:api:watch": "npm run test:watch -w services/api",
     "test:api:coverage": "npm run test:coverage -w services/api",
     "test:web": "npm run test -w services/web",
     "test:web:watch": "npm run test:watch -w services/web",
-    "test:web:coverage": "npm run test:coverage -w services/web"
+    "test:web:coverage": "npm run test:coverage -w services/web",
+    "test:workflows": "chmod +x .github/test-workflows.sh && .github/test-workflows.sh",
+    "test:workflows:validate": "chmod +x .github/validate-workflows.sh && .github/validate-workflows.sh"
   },
   "overrides": {
     "@types/express": "^4.17.0"

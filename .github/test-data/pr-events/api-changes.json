@@ -1,0 +1,16 @@
+{
+  "name": "push",
+  "payload": {
+    "ref": "refs/heads/main",
+    "head_commit": {
+      "message": "feat: add new GraphQL mutations for component updates",
+      "id": "commit-api-123",
+      "added": [],
+      "removed": [],
+      "modified": ["services/api/src/resolvers/mutation.ts", "services/api/src/schema.ts", "services/api/package.json"]
+    },
+    "repository": {
+      "default_branch": "main"
+    }
+  }
+}
