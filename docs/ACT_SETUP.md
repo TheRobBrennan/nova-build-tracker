@@ -6,6 +6,33 @@ This guide covers setting up `act` for local testing of GitHub Actions workflows
 
 `act` is a tool that lets you run your GitHub Actions workflows locally. It's useful for testing workflows before pushing changes, debugging issues, and validating workflow logic.
 
+## Prerequisites
+
+### Docker Required
+
+`act` requires Docker to run GitHub Actions workflows locally. Install Docker Desktop for your platform:
+
+**macOS:**
+```bash
+# Install Docker Desktop
+brew install --cask docker
+
+# Or download from https://www.docker.com/products/docker-desktop
+```
+
+**Linux:**
+```bash
+# Install Docker Engine
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+# Add user to docker group
+sudo usermod -aG docker $USER
+```
+
+**Windows:**
+Download and install Docker Desktop from https://www.docker.com/products/docker-desktop
+
 ## Installation
 
 ### macOS (Recommended)
