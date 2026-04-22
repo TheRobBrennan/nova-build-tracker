@@ -65,11 +65,13 @@ npm run test:workflows     # Full workflow testing with Docker (15+ minutes)
 ### Test Coverage
 
 **Service Tests (`test:services`):**
+
 - API unit tests and type checking
 - Web component tests and type checking
 - Fast feedback for code changes
 
 **Workflow Validation (`test:workflows:validate`):**
+
 - GitHub Actions workflow syntax and structure
 - Required steps and permissions validation
 - Test data completeness check
@@ -77,6 +79,7 @@ npm run test:workflows     # Full workflow testing with Docker (15+ minutes)
 - Runs in ~1 second
 
 **Full Workflow Testing (`test:workflows`):**
+
 - Complete GitHub Actions execution using `act`
 - Docker container builds and workflow simulation
 - Integration testing for version bump automation
