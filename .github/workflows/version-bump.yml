@@ -205,10 +205,10 @@ jobs:
             # Force merge the [skip ci] PR
             gh pr merge ${{ needs.version-bump.outputs.pr_number }} --merge --delete-branch --admin
             
-            # Double-check branch deletion and force delete if necessary
+            # Double-check branch deletion if necessary
             if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
-              echo "Branch still exists, forcing deletion..."
-              git push origin --delete "$BRANCH_NAME" --force
+              echo "Branch still exists, deleting..."
+              git push origin --delete "$BRANCH_NAME"
             fi
             
             echo "Successfully merged [skip ci] PR and cleaned up branch: $BRANCH_NAME"
@@ -243,10 +243,10 @@ jobs:
             # Merge the PR
             gh pr merge ${{ needs.version-bump.outputs.pr_number }} --merge --delete-branch --admin
             
-            # Double-check branch deletion and force delete if necessary
+            # Double-check branch deletion if necessary
             if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
-              echo "Branch still exists, forcing deletion..."
-              git push origin --delete "$BRANCH_NAME" --force
+              echo "Branch still exists, deleting..."
+              git push origin --delete "$BRANCH_NAME"
             fi
             
             echo "Successfully merged PR and cleaned up branch: $BRANCH_NAME"
