@@ -1,0 +1,16 @@
+{
+  "name": "push",
+  "payload": {
+    "ref": "refs/heads/main",
+    "head_commit": {
+      "message": "fix: correct component status validation",
+      "id": "commit789",
+      "added": [],
+      "removed": [],
+      "modified": ["package.json", "README.md"]
+    },
+    "repository": {
+      "default_branch": "main"
+    }
+  }
+}

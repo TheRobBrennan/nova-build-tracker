@@ -1,0 +1,16 @@
+{
+  "name": "push",
+  "payload": {
+    "ref": "refs/heads/main",
+    "head_commit": {
+      "message": "feat: add real-time component status updates",
+      "id": "commit-web-456",
+      "added": [],
+      "removed": [],
+      "modified": ["services/web/src/components/LiveFeed.tsx", "services/web/src/apollo/client.ts", "services/web/package.json"]
+    },
+    "repository": {
+      "default_branch": "main"
+    }
+  }
+}

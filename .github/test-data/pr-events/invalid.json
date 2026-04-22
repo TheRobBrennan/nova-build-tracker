@@ -1,0 +1,17 @@
+{
+  "name": "pull_request",
+  "payload": {
+    "action": "opened",
+    "number": 124,
+    "pull_request": {
+      "title": "add new component without prefix",
+      "body": "Adding a new feature without proper conventional commit format",
+      "head": {
+        "ref": "invalid-branch"
+      },
+      "base": {
+        "ref": "main"
+      }
+    }
+  }
+}
