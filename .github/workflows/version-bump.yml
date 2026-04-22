@@ -1,0 +1,238 @@
+name: Version Bump
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Default to cleanup containers on workflow completion
+env:
+  ACT_STOPPED_CONTAINER_RM: true  # Automatically remove stopped containers
+  ACT_FORCE_TERM: true             # Force terminate containers on SIGTERM
+
+jobs:
+  version-bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    outputs:
+      pr_number: ${{ steps.get_pr.outputs.pr_number }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Configure Git for GitHub Actions
+        if: ${{ github.actor != 'nektos/act' }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install Dependencies
+        run: npm ci || npm install
+          
+      - name: Determine Version Bump Type
+        id: bump-type
+        run: |
+          COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+          echo "Commit message: $COMMIT_MESSAGE"
+          
+          if [[ "$COMMIT_MESSAGE" =~ feat!: || "$COMMIT_MESSAGE" =~ fix!: || "$COMMIT_MESSAGE" =~ refactor!: ]]; then
+            echo "bump_type=major" >> $GITHUB_OUTPUT
+          elif [[ "$COMMIT_MESSAGE" =~ feat: ]]; then
+            echo "bump_type=minor" >> $GITHUB_OUTPUT
+          else
+            echo "bump_type=patch" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "Determined bump type: $(cat $GITHUB_OUTPUT | grep bump_type | cut -d'=' -f2)"
+          
+      - name: Detect Changed Services
+        id: changed-services
+        run: |
+          # Get the previous commit to compare against
+          PREVIOUS_COMMIT=$(git rev-parse HEAD~1)
+          echo "Previous commit: $PREVIOUS_COMMIT"
+          
+          # Check which services have changed
+          CHANGED_SERVICES=()
+          
+          # Check API service changes
+          if git diff --name-only $PREVIOUS_COMMIT HEAD | grep -q "^services/api/"; then
+            CHANGED_SERVICES+=("api")
+            echo "API service has changes"
+          fi
+          
+          # Check web service changes
+          if git diff --name-only $PREVIOUS_COMMIT HEAD | grep -q "^services/web/"; then
+            CHANGED_SERVICES+=("web")
+            echo "Web service has changes"
+          fi
+          
+          # Always include root package.json if there are any changes
+          CHANGED_SERVICES+=("root")
+          
+          # Output as comma-separated list
+          SERVICES=$(IFS=','; echo "${CHANGED_SERVICES[*]}")
+          echo "changed_services=$SERVICES" >> $GITHUB_OUTPUT
+          echo "Changed services: $SERVICES"
+          
+      - name: Create Version Bump Branch
+        id: create-branch
+        run: |
+          BRANCH_NAME="version-bump-$(date +%s)"
+          echo "Creating branch: $BRANCH_NAME"
+          git checkout -b "$BRANCH_NAME"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          
+          # Update version in root package.json
+          echo "Updating root package.json..."
+          npm version ${{ steps.bump-type.outputs.bump_type }} --no-git-tag-version
+          
+          # Update service versions if they changed
+          IFS=',' read -ra SERVICES <<< "${{ steps.changed-services.outputs.changed_services }}"
+          for service in "${SERVICES[@]}"; do
+            case $service in
+              "api")
+                echo "Updating API service version..."
+                cd services/api
+                npm version ${{ steps.bump-type.outputs.bump_type }} --no-git-tag-version
+                cd ../..
+                ;;
+              "web")
+                echo "Updating web service version..."
+                cd services/web
+                npm version ${{ steps.bump-type.outputs.bump_type }} --no-git-tag-version
+                cd ../..
+                ;;
+              "root")
+                echo "Root package.json already updated"
+                ;;
+            esac
+          done
+          
+          # Stage and commit changes
+          git add package.json services/*/package.json
+          git commit -m "chore: bump version [skip ci]"
+          git push origin "$BRANCH_NAME"
+          
+      - name: Create or Update Pull Request
+        id: create-pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_TITLE="chore: version bump [skip ci]"
+          PR_BODY="Automated version bump triggered by merge to main branch\n\n**Bump Type:** ${{ steps.bump-type.outputs.bump_type }}\n**Updated Services:** ${{ steps.changed-services.outputs.changed_services }}\n\nThis PR updates version numbers in:\n- Root package.json\n- Services with changes (see updated services list above)"
+          
+          # Create labels if they don't exist (with --force to update)
+          gh label create automated --color "#0E8A16" --description "Automated changes" --force
+          gh label create version-bump --color "#1D76DB" --description "Version bump changes" --force
+          
+          # Debug output
+          echo "Creating PR from branch: ${{ steps.create-branch.outputs.branch_name }}"
+          
+          # Create PR and capture PR number using grep
+          PR_URL=$(gh pr create \
+            --title "$PR_TITLE" \
+            --body "$PR_BODY" \
+            --base main \
+            --head "${{ steps.create-branch.outputs.branch_name }}" \
+            --label "automated" \
+            --label "version-bump")
+            
+          # Extract PR number from URL
+          PR_NUMBER=$(echo "$PR_URL" | grep -o '[0-9]*$')
+          
+          echo "Created PR #$PR_NUMBER: $PR_URL"
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+      
+      - name: Get PR Number
+        id: get_pr
+        run: |
+          echo "pr_number=${{ steps.create-pr.outputs.pr_number }}" >> $GITHUB_OUTPUT
+
+  cleanup:
+    if: always()
+    needs: [version-bump, merge-pr]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean up containers
+        if: always()
+        run: |
+          # List and remove any running act containers
+          docker ps -a --filter "name=act-*" --format "{{.ID}}" | xargs -r docker rm -f || true
+          
+          # Remove any dangling containers
+          docker container prune -f
+          
+          # Remove any dangling images
+          docker image prune -f
+
+  merge-pr:
+    needs: version-bump
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: read
+      statuses: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Wait for checks and merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Waiting for checks to complete on PR #${{ needs.version-bump.outputs.pr_number }}"
+          
+          # Wait for checks to complete (timeout after 10 minutes)
+          timeout=600
+          while [ $timeout -gt 0 ]; do
+            # Get check status using correct fields
+            STATUSES=$(gh pr view ${{ needs.version-bump.outputs.pr_number }} --json statusCheckRollup --jq '.statusCheckRollup.[].state')
+            echo "Current check statuses:"
+            echo "$STATUSES"
+            
+            if echo "$STATUSES" | grep -q "PENDING"; then
+              echo "Checks still running... ($timeout seconds remaining)"
+              sleep 10
+              timeout=$((timeout - 10))
+              continue
+            fi
+            
+            if echo "$STATUSES" | grep -q "FAILURE"; then
+              echo "Some checks failed!"
+              exit 1
+            fi
+            
+            echo "All checks passed!"
+            
+            # Get the branch name before merging
+            BRANCH_NAME=$(gh pr view ${{ needs.version-bump.outputs.pr_number }} --json headRefName --jq '.headRefName')
+            
+            # Merge the PR
+            gh pr merge ${{ needs.version-bump.outputs.pr_number }} --merge --delete-branch
+            
+            # Double-check branch deletion and force delete if necessary
+            if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
+              echo "Branch still exists, forcing deletion..."
+              git push origin --delete "$BRANCH_NAME" --force
+            fi
+            
+            echo "Successfully merged PR and cleaned up branch: $BRANCH_NAME"
+            exit 0
+          done
+          
+          echo "Timeout waiting for checks!"
+          exit 1
