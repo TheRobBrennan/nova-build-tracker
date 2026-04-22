@@ -43,5 +43,18 @@ services:
       - ./services/web/src:/app/src
       - ./services/web/vite.config.ts:/app/vite.config.ts
 
+  storybook:
+    build:
+      context: ./services/web
+      dockerfile: Dockerfile
+    command: npm run storybook
+    profiles:
+      - storybook
+    ports:
+      - "6006:6006"
+    volumes:
+      - ./services/web/src:/app/src
+      - ./services/web/.storybook:/app/.storybook
+
 volumes:
   db-data:
