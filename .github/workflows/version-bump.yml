@@ -222,7 +222,7 @@ jobs:
             BRANCH_NAME=$(gh pr view ${{ needs.version-bump.outputs.pr_number }} --json headRefName --jq '.headRefName')
             
             # Merge the PR
-            gh pr merge ${{ needs.version-bump.outputs.pr_number }} --merge --delete-branch
+            gh pr merge ${{ needs.version-bump.outputs.pr_number }} --merge --delete-branch --admin
             
             # Double-check branch deletion and force delete if necessary
             if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
