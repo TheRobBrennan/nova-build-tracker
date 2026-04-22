@@ -12,7 +12,7 @@ import type { Context } from '../context';
 describe('Component Field Resolvers', () => {
   function createMockContext(loaderOverrides = {}): Context {
     return {
-      db: {} as Context['db'],
+      db: {} as any,
       loaders: {
         buildStagesByComponentId: {
           load: vi.fn(),
@@ -20,16 +20,16 @@ describe('Component Field Resolvers', () => {
           clear: vi.fn(),
           clearAll: vi.fn(),
           prime: vi.fn(),
-        } as unknown as Context['loaders']['buildStagesByComponentId'],
+        },
         testEventsByComponentId: {
           load: vi.fn(),
           loadMany: vi.fn(),
           clear: vi.fn(),
           clearAll: vi.fn(),
           prime: vi.fn(),
-        } as unknown as Context['loaders']['testEventsByComponentId'],
+        },
         ...loaderOverrides,
-      },
+      } as any,
     };
   }
 
@@ -98,7 +98,7 @@ describe('Component Field Resolvers', () => {
       const parent = { createdAt: now };
 
       // Act
-      const result = componentResolvers.Component.createdAt(parent, {}, {} as Context);
+      const result = componentResolvers.Component.createdAt(parent);
 
       // Assert
       expect(result).toBe(now.toISOString());
@@ -112,7 +112,7 @@ describe('Component Field Resolvers', () => {
       const parent = { updatedAt: now };
 
       // Act
-      const result = componentResolvers.Component.updatedAt(parent, {}, {} as Context);
+      const result = componentResolvers.Component.updatedAt(parent);
 
       // Assert
       expect(result).toBe(now.toISOString());
@@ -125,7 +125,7 @@ describe('Component Field Resolvers', () => {
       const parent = { completedAt: null };
 
       // Act
-      const result = componentResolvers.BuildStage.completedAt(parent, {}, {} as Context);
+      const result = componentResolvers.BuildStage.completedAt(parent);
 
       // Assert
       expect(result).toBeNull();
@@ -137,7 +137,7 @@ describe('Component Field Resolvers', () => {
       const parent = { completedAt };
 
       // Act
-      const result = componentResolvers.BuildStage.completedAt(parent, {}, {} as Context);
+      const result = componentResolvers.BuildStage.completedAt(parent);
 
       // Assert
       expect(result).toBe(completedAt.toISOString());
@@ -151,7 +151,7 @@ describe('Component Field Resolvers', () => {
       const parent = { createdAt };
 
       // Act
-      const result = componentResolvers.BuildStage.createdAt(parent, {}, {} as Context);
+      const result = componentResolvers.BuildStage.createdAt(parent);
 
       // Assert
       expect(result).toBe(createdAt.toISOString());
@@ -165,7 +165,7 @@ describe('Component Field Resolvers', () => {
       const parent = { performedAt };
 
       // Act
-      const result = componentResolvers.TestEvent.performedAt(parent, {}, {} as Context);
+      const result = componentResolvers.TestEvent.performedAt(parent);
 
       // Assert
       expect(result).toBe(performedAt.toISOString());

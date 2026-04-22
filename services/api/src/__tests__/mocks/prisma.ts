@@ -87,11 +87,8 @@ export function createMockTestEvent(overrides: Partial<TestEvent> = {}): TestEve
 
 /**
  * Type helper for deeply mocked Prisma client
+ * Using any to avoid complex Prisma client type conflicts
  */
 export type DeepMockProxy<T> = {
-  [K in keyof T]: T[K] extends (...args: infer A) => infer R
-    ? Mock<A, R>
-    : T[K] extends object
-      ? DeepMockProxy<T[K]>
-      : T[K];
+  [K in keyof T]: any;
 };

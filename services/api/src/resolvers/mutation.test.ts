@@ -40,11 +40,11 @@ describe('Mutation Resolvers', () => {
     } as unknown as DeepMockProxy<PrismaClient>;
 
     return {
-      db: mockPrisma,
+      db: mockPrisma as any,
       loaders: {
-        buildStagesByComponentId: { load: vi.fn(), loadMany: vi.fn() } as unknown as Context['loaders']['buildStagesByComponentId'],
-        testEventsByComponentId: { load: vi.fn(), loadMany: vi.fn() } as unknown as Context['loaders']['testEventsByComponentId'],
-      },
+        buildStagesByComponentId: { load: vi.fn(), loadMany: vi.fn() },
+        testEventsByComponentId: { load: vi.fn(), loadMany: vi.fn() },
+      } as any,
     };
   }
 

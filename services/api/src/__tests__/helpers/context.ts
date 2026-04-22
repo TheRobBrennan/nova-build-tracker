@@ -15,25 +15,25 @@ import type { DeepMockProxy } from '../mocks/prisma';
  */
 export function createTestContext(mockPrisma: DeepMockProxy<PrismaClient>): Context {
   // Create minimal mock loaders for testing
-  const mockLoaders: Loaders = {
+  const mockLoaders = {
     buildStagesByComponentId: {
       load: vi.fn(),
       loadMany: vi.fn(),
       clear: vi.fn(),
       clearAll: vi.fn(),
       prime: vi.fn(),
-    } as unknown as Loaders['buildStagesByComponentId'],
+    },
     testEventsByComponentId: {
       load: vi.fn(),
       loadMany: vi.fn(),
       clear: vi.fn(),
       clearAll: vi.fn(),
       prime: vi.fn(),
-    } as unknown as Loaders['testEventsByComponentId'],
+    },
   };
 
   return {
     db: mockPrisma,
-    loaders: mockLoaders,
+    loaders: mockLoaders as any,
   };
 }

@@ -18,7 +18,7 @@ describe('createLoaders', () => {
         findMany: vi.fn(),
       },
       ...overrides,
-    } as unknown as PrismaClient;
+    } as any;
   }
 
   describe('buildStagesByComponentId', () => {
@@ -31,7 +31,7 @@ describe('createLoaders', () => {
       ] as BuildStage[];
 
       const mockPrisma = createMockPrisma({
-        buildStage: { findMany: vi.fn().mockResolvedValue(stages) },
+        buildStage: { findMany: vi.fn().mockResolvedValue(stages) } as any,
       });
 
       const loaders = createLoaders(mockPrisma);
@@ -58,7 +58,7 @@ describe('createLoaders', () => {
       ] as BuildStage[];
 
       const mockPrisma = createMockPrisma({
-        buildStage: { findMany: vi.fn().mockResolvedValue(stages) },
+        buildStage: { findMany: vi.fn().mockResolvedValue(stages) } as any,
       });
 
       const loaders = createLoaders(mockPrisma);
@@ -80,7 +80,7 @@ describe('createLoaders', () => {
       ] as BuildStage[];
 
       const mockPrisma = createMockPrisma({
-        buildStage: { findMany: vi.fn().mockResolvedValue(stages) },
+        buildStage: { findMany: vi.fn().mockResolvedValue(stages) } as any,
       });
 
       const loaders = createLoaders(mockPrisma);
@@ -110,7 +110,7 @@ describe('createLoaders', () => {
       ] as TestEvent[];
 
       const mockPrisma = createMockPrisma({
-        testEvent: { findMany: vi.fn().mockResolvedValue(events) },
+        testEvent: { findMany: vi.fn().mockResolvedValue(events) } as any,
       });
 
       const loaders = createLoaders(mockPrisma);
@@ -145,7 +145,7 @@ describe('createLoaders', () => {
       ] as TestEvent[];
 
       const mockPrisma = createMockPrisma({
-        testEvent: { findMany: vi.fn().mockResolvedValue(events) },
+        testEvent: { findMany: vi.fn().mockResolvedValue(events) } as any,
       });
 
       const loaders = createLoaders(mockPrisma);
