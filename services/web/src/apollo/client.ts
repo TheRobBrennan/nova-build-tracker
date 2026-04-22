@@ -1,11 +1,12 @@
-import { ApolloClient, InMemoryCache, split, HttpLink, from } from '@apollo/client';
+import { ApolloClient, InMemoryCache, split, HttpLink, from, NormalizedCacheObject } from '@apollo/client';
+import { persistCache } from 'apollo3-cache-persist';
 import { RetryLink } from '@apollo/client/link/retry';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 
 const HTTP_URL = '/graphql';
-const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.hostname}:4000/graphql`;
+const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/graphql`;
 
 const httpLink = new HttpLink({ uri: HTTP_URL });
 
@@ -81,11 +82,37 @@ const splitLink = split(
   from([retryLink, httpLink])
 );
 
-export const apolloClient = new ApolloClient({
-  link: splitLink,
-  cache: new InMemoryCache(),
+const cache = new InMemoryCache();
+
+// Persist cache to localStorage for smooth reloads
+const initCache = persistCache({
+  cache,
+  storage: localStorage,
+  key: 'nova-build-tracker-cache',
+});
+
+// Export a Promise that resolves to the initialized client
+export const apolloClientPromise = initCache.then(() => {
+  return new ApolloClient({
+    link: splitLink,
+    cache,
+    ssrMode: false,
+  });
+});
+
+// For backward compatibility, export the client (will be ready after cache loads)
+export let apolloClient: ApolloClient<NormalizedCacheObject>;
+
+// Initialize the client
+apolloClientPromise.then((client: ApolloClient<NormalizedCacheObject>) => {
+  apolloClient = client;
 });
 
 wsClient.on('connected', () => {
-  apolloClient.reFetchObservableQueries();
+  // Smooth refetch - no flash, just updates in background
+  if (apolloClient) {
+    apolloClient.reFetchObservableQueries().catch(() => {
+      // Silently handle errors - we'll retry via RetryLink
+    });
+  }
 });

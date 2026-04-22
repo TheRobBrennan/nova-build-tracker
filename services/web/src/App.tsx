@@ -3,6 +3,7 @@ import { Rocket, Plus } from 'lucide-react';
 import { ComponentList } from './components/ComponentList';
 import { CreateComponentForm } from './components/CreateComponentForm';
 import { LiveFeed } from './components/LiveFeed';
+import { LaunchLoader } from './components/LaunchLoader';
 
 export default function App() {
   const [showCreate, setShowCreate] = useState(false);
@@ -36,6 +37,7 @@ export default function App() {
       {showCreate && (
         <CreateComponentForm onClose={() => setShowCreate(false)} />
       )}
+      <LaunchLoader />
     </div>
   );
 }
