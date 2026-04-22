@@ -115,6 +115,40 @@ logTestEvent(componentId: ID!, input: LogTestEventInput!): TestEvent!
 componentStatusChanged: Component!   # real-time via WebSocket
 ```
 
+## Version Management
+
+### Automated Version Bumping
+
+This project uses automated version management that triggers on merges to `main`:
+
+- **Major bump**: `feat!`, `fix!`, `refactor!` (breaking changes)
+- **Minor bump**: `feat:` (new features)
+- **Patch bump**: `fix:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:`, `build:`, `ci:`, `chore:`, `revert:`
+
+The version bump workflow:
+1. Detects bump type from commit message
+2. Identifies which services changed (API, web, or both)
+3. Updates version numbers in affected `package.json` files
+4. Creates an automated PR with version changes
+5. Waits for CI checks and merges automatically
+
+### Testing Workflows Locally
+
+Use `act` to test GitHub Actions workflows locally:
+
+```bash
+# Install act (macOS)
+brew install act
+
+# Test all workflows
+npm run test:workflows
+
+# Test specific workflow
+act pull_request -e .github/test-data/pr-events/valid.json -W .github/workflows/ci.yml
+```
+
+See [Act Setup Guide](docs/ACT_SETUP.md) for detailed setup instructions.
+
 ## Architecture Notes
 
 - **Docker-first**: The entire stack starts with `npm start` — no local Node.js or Postgres required
@@ -122,3 +156,4 @@ componentStatusChanged: Component!   # real-time via WebSocket
 - **Split link**: Apollo Client routes subscriptions to WebSocket and everything else to HTTP automatically
 - **Idempotent seed**: The seed script checks for existing data before inserting — safe to run on every container start
 - **Prisma Migrate**: Migrations run automatically via `prisma migrate deploy` in the Docker entrypoint before the server starts
+- **Automated versioning**: Semantic version bumps triggered by conventional commit messages on merge to main
