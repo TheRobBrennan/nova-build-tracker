@@ -13,6 +13,7 @@ This guide covers setting up `act` for local testing of GitHub Actions workflows
 `act` requires Docker to run GitHub Actions workflows locally. Install Docker Desktop for your platform:
 
 **macOS:**
+
 ```bash
 # Install Docker Desktop
 brew install --cask docker
@@ -21,6 +22,7 @@ brew install --cask docker
 ```
 
 **Linux:**
+
 ```bash
 # Install Docker Engine
 curl -fsSL https://get.docker.com -o get-docker.sh
@@ -31,7 +33,8 @@ sudo usermod -aG docker $USER
 ```
 
 **Windows:**
-Download and install Docker Desktop from https://www.docker.com/products/docker-desktop
+
+Download and install Docker Desktop from <https://www.docker.com/products/docker-desktop>
 
 ## Installation
 

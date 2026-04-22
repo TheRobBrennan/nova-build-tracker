@@ -126,6 +126,7 @@ This project uses automated version management that triggers on merges to `main`
 - **Patch bump**: `fix:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:`, `build:`, `ci:`, `chore:`, `revert:`
 
 The version bump workflow:
+
 1. Detects bump type from commit message
 2. Identifies which services changed (API, web, or both)
 3. Updates version numbers in affected `package.json` files
@@ -135,12 +136,14 @@ The version bump workflow:
 ### Testing Workflows Locally
 
 **Quick Validation (Recommended):**
+
 ```bash
 # Fast syntax and logic validation (seconds)
 npm run test:workflows:validate
 ```
 
 **Full Integration Testing:**
+
 ```bash
 # Install act (macOS)
 brew install act
