@@ -14,6 +14,8 @@ Tracks rocket components through their full build lifecycle: fabrication, inspec
 | Real-time | GraphQL Subscriptions over WebSocket (`graphql-ws`) |
 | Infrastructure | Docker, Docker Compose |
 
+> **Note**: Apollo Server v4 is end-of-life as of January 26, 2026. An upgrade to Apollo Server v5 is planned for future releases.
+
 ## Documentation
 
 | Document | Description |
