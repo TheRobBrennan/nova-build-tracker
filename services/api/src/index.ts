@@ -8,12 +8,14 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { typeDefs } from './schema';
 import { resolvers } from './resolvers/index';
 import { createContext } from './context';
 import { createLoaders } from './loaders';
 
-const db = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: process.env['DATABASE_URL']! });
+const db = new PrismaClient({ adapter });
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
