@@ -134,13 +134,18 @@ The version bump workflow:
 
 ### Testing Workflows Locally
 
-Use `act` to test GitHub Actions workflows locally:
+**Quick Validation (Recommended):**
+```bash
+# Fast syntax and logic validation (seconds)
+npm run test:workflows:validate
+```
 
+**Full Integration Testing:**
 ```bash
 # Install act (macOS)
 brew install act
 
-# Test all workflows
+# Complete workflow testing with Docker (minutes)
 npm run test:workflows
 
 # Test specific workflow
