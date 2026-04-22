@@ -18,8 +18,10 @@
   "scripts": {
     "start": "docker compose up",
     "start:clean": "docker compose up --build",
-    "stop": "docker compose down",
-    "clean": "docker compose down -v",
+    "start:dev": "docker compose --profile storybook up",
+    "start:dev:clean": "docker compose --profile storybook up --build",
+    "stop": "docker compose --profile storybook down",
+    "clean": "docker compose --profile storybook down -v",
     "logs": "docker compose logs -f",
     "logs:api": "docker compose logs -f api",
     "logs:web": "docker compose logs -f web",
@@ -32,7 +34,11 @@
     "test:web:watch": "npm run test:watch -w services/web",
     "test:web:coverage": "npm run test:coverage -w services/web",
     "test:workflows": "chmod +x .github/test-workflows.sh && .github/test-workflows.sh",
-    "test:workflows:validate": "chmod +x .github/validate-workflows.sh && .github/validate-workflows.sh"
+    "test:workflows:validate": "chmod +x .github/validate-workflows.sh && .github/validate-workflows.sh",
+    "storybook": "npm run storybook -w services/web",
+    "storybook:build": "npm run build-storybook -w services/web",
+    "storybook:docker": "docker compose --profile storybook up storybook",
+    "storybook:logs": "docker compose logs -f storybook"
   },
   "overrides": {
     "@types/express": "^4.17.0"

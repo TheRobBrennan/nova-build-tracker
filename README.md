@@ -36,19 +36,26 @@ npm start
 - Frontend: <http://localhost:5173>
 - GraphQL API: <http://localhost:4000/graphql>
 - PostgreSQL: `localhost:5432` (user: `nova`, db: `nova_build_tracker`)
+- Storybook: <http://localhost:6006> (separate — see [Storybook](#storybook) below)
 
 The API automatically runs database migrations and seeds sample Nova component data on first start.
 
 ## Development Commands
 
 ```bash
-npm start           # Start all services (Docker)
-npm run start:clean # Rebuild images and start
-npm run stop        # Stop all services
-npm run clean       # Stop and remove volumes (wipes DB)
-npm run logs        # Tail all service logs
-npm run logs:api    # Tail API logs only
-npm run logs:web    # Tail web logs only
+npm start              # Start core stack: db + api + web (Docker)
+npm run start:clean    # Rebuild images and start core stack
+npm run start:dev      # Start full dev stack: db + api + web + Storybook
+npm run start:dev:clean # Rebuild all images and start full dev stack
+npm run stop           # Stop all services
+npm run clean          # Stop and remove volumes (wipes DB)
+npm run logs           # Tail all service logs
+npm run logs:api       # Tail API logs only
+npm run logs:web       # Tail web logs only
+npm run storybook          # Run Storybook locally (port 6006, requires local Node.js)
+npm run storybook:build    # Build static Storybook
+npm run storybook:docker   # Run only Storybook in Docker (port 6006)
+npm run storybook:logs     # Tail Storybook container logs
 ```
 
 ## Testing
@@ -85,6 +92,55 @@ npm run test:workflows     # Full workflow testing with Docker (15+ minutes)
 - Integration testing for version bump automation
 - Requires Docker and can take 15+ minutes
 - Authentication errors expected locally (works in GitHub)
+
+## Storybook
+
+Storybook runs independently of the main Docker stack. It renders components in isolation with no live API or database required.
+
+**Full dev stack (recommended — Docker, no local Node.js required):**
+
+```bash
+npm run start:dev:clean    # clean build: db + api + web + Storybook
+npm run start:dev          # subsequent runs (no rebuild)
+```
+
+Access points when using `start:dev`:
+
+- Web app → <http://localhost:5173>
+- Storybook → <http://localhost:6006>
+
+**Storybook only (Docker):**
+
+```bash
+npm run storybook:docker
+```
+
+**Build static output:**
+
+```bash
+npm run storybook:build
+```
+
+**Local (Node.js must be installed in `services/web`):**
+
+```bash
+cd services/web && npm install
+npm run storybook          # http://localhost:6006
+```
+
+> On first run, or after adding Storybook dependencies, rebuild the image: `docker compose build storybook`
+
+### Stories
+
+| Component | Stories |
+| --- | --- |
+| `StatusBadge` | Pending, In Progress, Testing, Accepted, Rejected, All Statuses |
+| `ComponentCard` | Pending, In Progress, Testing, Accepted, Rejected, No Stages, All Stages Complete |
+| `LaunchLoader` | Connecting (animated full-screen overlay) |
+| `CreateComponentForm` | Default (empty form modal) |
+| `LiveFeed` | Waiting for Events (empty state) |
+
+Apollo mutations/subscriptions are wrapped in a `MockedProvider` (no mocked responses). The local WebSocket state module (`apollo/client`) is replaced with a no-op mock via a Vite alias, so components never wait on a real WebSocket connection.
 
 ## Project Structure
 
