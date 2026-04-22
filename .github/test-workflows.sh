@@ -69,6 +69,11 @@ act push -e .github/test-data/pr-events/multiple-changes.json -W .github/workflo
 cleanup_act_containers
 echo ""
 
+echo "7. Testing version bump with infrastructure-only changes (should NOT bump any service)..."
+act push -e .github/test-data/pr-events/infra-only-changes.json -W .github/workflows/version-bump.yml --container-architecture linux/amd64 -s GITHUB_TOKEN="test-token"
+cleanup_act_containers
+echo ""
+
 # Final cleanup to ensure no containers are left behind
 cleanup_act_containers
 
