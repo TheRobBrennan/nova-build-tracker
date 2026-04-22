@@ -44,10 +44,14 @@ For automated workflows that need to push directly to main:
 - [ ] "Require status checks to pass before merging"
 - [ ] "Require branches to be up to date before merging"
 
-**Keep these settings:**
+**Keep these settings (for direct pushes):**
 
-- [x] "Require approvals" (maintains human oversight)
-- [x] "Require conversation resolution" (maintains collaboration)
+- [x] "Require signed commits" (maintains commit signing requirements)
+- [x] "Require linear history" (maintains clean git history)
+- [x] "Restrict who can push" (limits who can push directly)
+- [x] "Require conversation resolution" (for any PRs that are created)
+
+**Note**: Approval-based settings like "Require approvals" only apply to pull requests, not direct pushes. For automated direct commits, you cannot enforce PR-based approvals.
 
 ### Option 2: PR-Based Automation
 
